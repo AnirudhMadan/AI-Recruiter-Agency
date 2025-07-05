@@ -1,0 +1,42 @@
+# 🧠 Python
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+*.pkl
+*.db
+*.sqlite3
+
+# 🧪 Virtual Environments
+venv/
+.env
+.env.*
+
+# 📂 Output / Temporary Files
+results/
+uploads/
+logs/
+*.log
+
+# 🧾 Streamlit Caches
+.streamlit/config.toml
+.streamlit/secrets.toml
+
+# 🔒 API keys / secrets (if any)
+*.env
+
+# 📁 Project-specific folders
+myfiles/
+default files/
+
+# 🚀 OS-specific
+.DS_Store
+Thumbs.db
+
+# 📦 Packaging artifacts
+dist/
+build/
+*.egg-info/
+
+# 📄 Notebook Checkpoints (if using Jupyter at any point)
+.ipynb_checkpoints/
