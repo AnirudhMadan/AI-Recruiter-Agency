@@ -1,36 +1,48 @@
 from typing import Dict, Any
 import json
-from openai import OpenAI
+import requests
 
 
 class BaseAgent:
-    def __init__(self, name: str, instructions: str):
+    def __init__(self, name: str, instructions: str, api_key: str):
         self.name = name
         self.instructions = instructions
-        self.ollama_client = OpenAI(
-            base_url="http://localhost:11434/v1",
-            api_key="ollama",  # required but unused
-        )
+        self.api_key = api_key
+
+        # Gemini model you want to use (flash or pro)
+        self.model = "gemini-1.5-pro-latest"
 
     async def run(self, messages: list) -> Dict[str, Any]:
         """Default run method to be overridden by child classes"""
         raise NotImplementedError("Subclasses must implement run()")
 
-    def _query_ollama(self, prompt: str) -> str:
-        """Query Ollama model with the given prompt"""
+    def _query_gemini(self, prompt: str) -> str:
+        """Query Gemini model with the given prompt"""
         try:
-            response = self.ollama_client.chat.completions.create(
-                model="llama3.2",  # Updated to llama3.2
-                messages=[
-                    {"role": "system", "content": self.instructions},
-                    {"role": "user", "content": prompt},
-                ],
-                temperature=0.7,
-                max_tokens=2000,
-            )
-            return response.choices[0].message.content
+            url = f"https://generativelanguage.googleapis.com/v1beta/models/{self.model}:generateContent?key={self.api_key}"
+            payload = {
+                "contents": [
+                    {
+                        "parts": [
+                            {"text": f"{self.instructions}\n\n{prompt}"}
+                        ]
+                    }
+                ]
+            }
+            headers = {
+                "Content-Type": "application/json"
+            }
+
+            response = requests.post(url, headers=headers, json=payload)
+
+            if response.status_code == 200:
+                result = response.json()
+                return result["candidates"][0]["content"]["parts"][0]["text"]
+            else:
+                return f"Error: {response.status_code}\n{response.text}"
+
         except Exception as e:
-            print(f"Error querying Ollama: {str(e)}")
+            print(f"Error querying Gemini: {str(e)}")
             raise
 
     def _parse_json_safely(self, text: str) -> Dict[str, Any]:

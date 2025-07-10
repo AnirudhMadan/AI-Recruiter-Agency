@@ -8,3 +8,5 @@ streamlit-option-menu==0.3.12
 git+https://github.com/openai/swarm.git
 requests
 datetime
+python-dotenv
+

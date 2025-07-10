@@ -2,7 +2,8 @@ import json
 from typing import Dict, Any
 from .base_agent import BaseAgent
 from datetime import datetime
-
+import os
+from config import GOOGLE_API_KEY  
 
 
 class AnalyzerAgent(BaseAgent):
@@ -18,6 +19,7 @@ class AnalyzerAgent(BaseAgent):
             6. Domain expertise
             
             Format the output as structured data.""",
+            api_key=os.getenv("GOOGLE_API_KEY")  # or use st.secrets["GOOGLE_API_KEY"]
         )
 
     async def run(self, messages: list) -> Dict[str, Any]:
@@ -27,7 +29,6 @@ class AnalyzerAgent(BaseAgent):
             payload = eval(messages[-1]["content"])
             resume_data = payload.get("extracted_resume", {})
             university_context = payload.get("university_context", "")
-
             structured = resume_data.get("structured_data", {})
         except Exception as e:
             print(f"[Analyzer Error] Failed to parse input: {e}")
@@ -59,7 +60,9 @@ class AnalyzerAgent(BaseAgent):
         Return ONLY the JSON object.
         """
 
-        response = self._query_ollama(analysis_prompt)
+        # Use Gemini API (previously _query_ollama)
+        response = self._query_gemini(analysis_prompt)
+
         parsed = self._parse_json_safely(response)
 
         if "error" in parsed:
@@ -75,6 +78,6 @@ class AnalyzerAgent(BaseAgent):
         return {
             "skills_analysis": parsed,
             "analysis_timestamp": str(datetime.now().date()),
-            "domain_expertise": parsed.get("domain_expertise", []),  # ✅ EXTRACTED HERE
+            "domain_expertise": parsed.get("domain_expertise", []),
             "confidence_score": 0.85 if "error" not in parsed else 0.5,
         }
