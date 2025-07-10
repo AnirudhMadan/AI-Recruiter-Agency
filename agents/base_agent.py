@@ -10,7 +10,7 @@ class BaseAgent:
         self.api_key = api_key
 
         # Gemini model you want to use (flash or pro)
-        self.model = "gemini-1.5-pro-latest"
+        self.model = "gemini-1.5-flash-latest"
 
     async def run(self, messages: list) -> Dict[str, Any]:
         """Default run method to be overridden by child classes"""
@@ -19,7 +19,7 @@ class BaseAgent:
     def _query_gemini(self, prompt: str) -> str:
         """Query Gemini model with the given prompt"""
         try:
-            url = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-pro-latest:generateContent?key={self.api_key}"
+            url = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash-latest:generateContent?key={self.api_key}"
 
             payload = {
                 "contents": [
