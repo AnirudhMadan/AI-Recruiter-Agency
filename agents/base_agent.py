@@ -10,7 +10,7 @@ class BaseAgent:
         self.api_key = api_key
 
         # Gemini model you want to use (flash or pro)
-        self.model = "gemini-pro"
+        self.model = "gemini-1.5-pro-latest"
 
     async def run(self, messages: list) -> Dict[str, Any]:
         """Default run method to be overridden by child classes"""
