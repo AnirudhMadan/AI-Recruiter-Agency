@@ -8,8 +8,6 @@ from .matcher_agent import MatcherAgent
 from .screener_agent import ScreenerAgent
 from .recommender_agent import RecommenderAgent
 
-from config import GOOGLE_API_KEY  # ✅ import from centralized config
-
 
 class OrchestratorAgent(BaseAgent):
     def __init__(self):
@@ -17,20 +15,17 @@ class OrchestratorAgent(BaseAgent):
             name="Orchestrator",
             instructions="""Coordinate the recruitment workflow and delegate tasks to specialized agents.
             Ensure proper flow of information between extraction, analysis, matching, screening, and recommendation phases.
-            Maintain context and aggregate results from each stage.""",
-            api_key=GOOGLE_API_KEY  # ✅ shared from config
+            Maintain context and aggregate results from each stage."""
         )
         self._setup_agents()
 
     def _setup_agents(self):
-        """Initialize all specialized agents with shared API key"""
+        """Initialize all specialized agents"""
         self.extractor = ExtractorAgent()
         self.analyzer = AnalyzerAgent()
         self.matcher = MatcherAgent()
         self.screener = ScreenerAgent()
         self.recommender = RecommenderAgent()
-
-        # ✅ All agents should use GOOGLE_API_KEY internally from config
 
     async def run(self, messages: list) -> Dict[str, Any]:
         print("ℹ️ Orchestrator: Direct run() called – fallback mode")

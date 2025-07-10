@@ -1,12 +1,6 @@
 from typing import Dict, Any
 from pdfminer.high_level import extract_text  # pip install pdfminer.six
 from .base_agent import BaseAgent
-import os
-from dotenv import load_dotenv
-from config import GOOGLE_API_KEY  
-
-# Load environment variables
-load_dotenv()
 
 
 class ExtractorAgent(BaseAgent):
@@ -15,8 +9,7 @@ class ExtractorAgent(BaseAgent):
             name="Extractor",
             instructions="""Extract and structure information from resumes.
             Focus on: personal info, work experience, education, skills, and certifications.
-            Provide output in a clear, structured format as JSON only.""",
-            api_key=GOOGLE_API_KEY  # ✅ Load Gemini key from .env
+            Provide output in a clear, structured format as JSON only."""
         )
 
     async def run(self, messages: list) -> Dict[str, Any]:
@@ -48,7 +41,6 @@ class ExtractorAgent(BaseAgent):
         Return the result as a JSON object.
         """
 
-        # 🔁 Use Gemini instead of Ollama
         response = self._query_gemini(prompt)
         structured = self._parse_json_safely(response)
 

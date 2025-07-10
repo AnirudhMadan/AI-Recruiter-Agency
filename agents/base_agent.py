@@ -1,55 +1,28 @@
 from typing import Dict, Any
 import json
-import requests
+from utils.gemini_client import query_gemini_proxy  # ✅ Add this import
 
 
 class BaseAgent:
-    def __init__(self, name: str, instructions: str, api_key: str):
+    def __init__(self, name: str, instructions: str):
         self.name = name
         self.instructions = instructions
-        self.api_key = api_key
-
-        # Gemini model you want to use (flash or pro)
-        self.model = "gemini-1.5-flash-latest"
 
     async def run(self, messages: list) -> Dict[str, Any]:
         """Default run method to be overridden by child classes"""
         raise NotImplementedError("Subclasses must implement run()")
 
     def _query_gemini(self, prompt: str) -> str:
-        """Query Gemini model with the given prompt"""
+        """Use Gemini proxy to generate response from prompt"""
         try:
-            url = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash-latest:generateContent?key={self.api_key}"
-
-            payload = {
-                "contents": [
-                    {
-                        "parts": [
-                            {"text": f"{self.instructions}\n\n{prompt}"}
-                        ]
-                    }
-                ]
-            }
-            headers = {
-                "Content-Type": "application/json"
-            }
-
-            response = requests.post(url, headers=headers, json=payload)
-
-            if response.status_code == 200:
-                result = response.json()
-                return result["candidates"][0]["content"]["parts"][0]["text"]
-            else:
-                return f"Error: {response.status_code}\n{response.text}"
-
+            return query_gemini_proxy(prompt=prompt, instructions=self.instructions)
         except Exception as e:
-            print(f"Error querying Gemini: {str(e)}")
-            raise
+            print(f"Error querying Gemini Proxy: {str(e)}")
+            return f"Proxy Error: {str(e)}"
 
     def _parse_json_safely(self, text: str) -> Dict[str, Any]:
         """Safely parse JSON from text, handling potential errors"""
         try:
-            # Try to find JSON-like content between curly braces
             start = text.find("{")
             end = text.rfind("}")
             if start != -1 and end != -1:

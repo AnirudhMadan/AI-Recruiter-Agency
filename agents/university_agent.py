@@ -1,8 +1,6 @@
 from typing import Dict, Any
 from agents.base_agent import BaseAgent
-import streamlit as st
 from datetime import datetime
-from config import GOOGLE_API_KEY
 
 class UniversityAgent(BaseAgent):
     def __init__(self):
@@ -20,8 +18,7 @@ class UniversityAgent(BaseAgent):
             - Suggested job roles based on the curriculum
 
             Format your response with section titles and clean bullet points. Do not return any JSON or raw code.
-            """,
-            api_key=GOOGLE_API_KEY
+            """
         )
 
     async def run(self, messages: list) -> Dict[str, Any]:
@@ -36,7 +33,7 @@ class UniversityAgent(BaseAgent):
                 "timestamp": str(datetime.now().date())
             }
 
-        # Compose full prompt and call Gemini
+        # Compose full prompt and call Gemini via proxy
         response_text = self._query_gemini(input_text)
 
         return {

@@ -1,9 +1,6 @@
-import json
 from typing import Dict, Any
 from .base_agent import BaseAgent
 from datetime import datetime
-import os
-from config import GOOGLE_API_KEY  
 
 
 class AnalyzerAgent(BaseAgent):
@@ -17,9 +14,8 @@ class AnalyzerAgent(BaseAgent):
             4. Experience level (Junior/Mid-level/Senior)
             5. Key achievements
             6. Domain expertise
-            
-            Format the output as structured data.""",
-            api_key=os.getenv("GOOGLE_API_KEY")  # or use st.secrets["GOOGLE_API_KEY"]
+
+            Format the output as structured data."""
         )
 
     async def run(self, messages: list) -> Dict[str, Any]:
@@ -34,7 +30,6 @@ class AnalyzerAgent(BaseAgent):
             print(f"[Analyzer Error] Failed to parse input: {e}")
             structured = {}
 
-        # Build prompt
         analysis_prompt = f"""
         Analyze the candidate based on the resume data below and optionally include insights from university curriculum context.
 
@@ -60,9 +55,7 @@ class AnalyzerAgent(BaseAgent):
         Return ONLY the JSON object.
         """
 
-        # Use Gemini API (previously _query_ollama)
         response = self._query_gemini(analysis_prompt)
-
         parsed = self._parse_json_safely(response)
 
         if "error" in parsed:

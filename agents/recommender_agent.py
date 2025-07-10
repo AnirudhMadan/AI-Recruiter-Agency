@@ -1,8 +1,7 @@
 from typing import Dict, Any
 from datetime import datetime
 from .base_agent import BaseAgent
-import streamlit as st
-from config import GOOGLE_API_KEY
+
 
 class RecommenderAgent(BaseAgent):
     def __init__(self):
@@ -18,8 +17,7 @@ class RecommenderAgent(BaseAgent):
             - Clear next steps
             - Personalized insights based on the profile
             - Any missing elements (skills, qualifications)
-            Return the recommendations in a well-structured paragraph.""",
-            api_key=GOOGLE_API_KEY
+            Return the recommendations in a well-structured paragraph."""
         )
 
     async def run(self, messages: list) -> Dict[str, Any]:
@@ -27,7 +25,6 @@ class RecommenderAgent(BaseAgent):
         print("💡 Recommender: Generating final recommendations")
 
         try:
-            # Safely evaluate and stringify the input context
             workflow_context = eval(messages[-1]["content"])
             prompt = f"Candidate Data:\n{workflow_context}"
         except Exception as e:
@@ -38,7 +35,6 @@ class RecommenderAgent(BaseAgent):
                 "confidence_level": "low"
             }
 
-        # Query Gemini
         recommendation = self._query_gemini(prompt)
 
         return {

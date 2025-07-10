@@ -1,18 +1,12 @@
 from typing import Dict, Any
 from .base_agent import BaseAgent
-import os
-from dotenv import load_dotenv
-from config import GOOGLE_API_KEY
 
-# Load environment variables
-load_dotenv()
 
 class ProfileEnhancerAgent(BaseAgent):
     def __init__(self):
         super().__init__(
             name="Profile Enhancer",
-            instructions="Enhance the candidate's resume into a professional summary paragraph using the extracted structured info.",
-            api_key=GOOGLE_API_KEY
+            instructions="Enhance the candidate's resume into a professional summary paragraph using the extracted structured info."
         )
 
     def enhance(self, extracted_info: Dict[str, Any]) -> Dict[str, Any]:

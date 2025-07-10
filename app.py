@@ -1,5 +1,3 @@
-# integrated_app.py
-
 import streamlit as st
 import asyncio
 import os
@@ -10,7 +8,7 @@ from agents.orchestrator import OrchestratorAgent
 from utils.logger import setup_logger
 from utils.exceptions import ResumeProcessingError
 from university_app import render_university_interface
-from domain_job_search_demo import run_domain_job_search  # 👈 new import
+from domain_job_search_demo import run_domain_job_search
 
 # =============================
 # CONFIGURE STREAMLIT PAGE
@@ -26,6 +24,10 @@ st.set_page_config(
 # SETUP LOGGER
 # =============================
 logger = setup_logger()
+
+if "GEMINI_PROXY_URL" not in st.secrets:
+    st.error("❌ Gemini Proxy URL is not configured in Streamlit secrets.")
+    st.stop()
 
 # =============================
 # CUSTOM CSS
@@ -64,7 +66,7 @@ def main():
         st.title("AI Recruiter Agency")
         selected = option_menu(
             menu_title="Navigation",
-            options=["Upload Resume", "University Curriculum", "Job Search", "About","Research Papers"],
+            options=["Upload Resume", "University Curriculum", "Job Search", "About", "Research Papers"],
             icons=["cloud-upload", "book", "search", "info-circle"],
             menu_icon="cast",
             default_index=0,
@@ -74,7 +76,6 @@ def main():
         st.header("📄 Resume Analysis")
         st.write("Upload a resume to get AI-powered insights and job matches.")
 
-        # Fetch university context if any
         university_context = ""
         if "university_result" in st.session_state:
             university_context = str(st.session_state["university_result"])
@@ -104,7 +105,7 @@ def main():
                         progress_bar.progress(100)
                         status_text.text("Analysis complete!")
 
-                        tab1, tab3, tab4 = st.tabs(["📊 Analysis", "🎯 Screening", "💡 Recommendation"])
+                        tab1, tab3, tab4 = st.tabs(["📊 Analysis", "🌟 Screening", "💡 Recommendation"])
 
                         with tab1:
                             st.subheader("Skills Analysis")
@@ -163,7 +164,7 @@ def main():
         Our system uses specialized AI agents to:
         1. 📄 Extract information from resumes
         2. 🔍 Analyze candidate profiles
-        3. 🎯 Match with suitable positions
+        3. 🌟 Match with suitable positions
         4. 👥 Screen candidates
         5. 💡 Provide detailed recommendations
         """

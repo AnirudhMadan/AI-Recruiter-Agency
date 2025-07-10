@@ -1,14 +1,8 @@
 import json
-import os
 import requests
 from typing import Dict, Any, List
 from .base_agent import BaseAgent
 from datetime import datetime
-from dotenv import load_dotenv
-from config import GOOGLE_API_KEY
-
-# Load environment
-load_dotenv()
 
 # Mapping skill keywords to recommended roles
 RECOMMENDED_ROLE_MAP = {
@@ -26,7 +20,6 @@ RECOMMENDED_ROLE_MAP = {
     "Aws": "Cloud Engineer",
 }
 
-
 def recommend_roles(skills: List[str]) -> List[str]:
     roles = set()
     for skill in skills:
@@ -36,7 +29,6 @@ def recommend_roles(skills: List[str]) -> List[str]:
                 roles.add(role)
     return list(roles)[:5]
 
-
 class MatcherAgent(BaseAgent):
     def __init__(self):
         super().__init__(
@@ -44,11 +36,10 @@ class MatcherAgent(BaseAgent):
             instructions="""Match candidate profiles with job positions.
             Consider: skills match, experience level, location preferences.
             Provide detailed reasoning and compatibility scores.
-            Return matches in JSON format with title, match_score, and location fields.""",
-            api_key=GOOGLE_API_KEY # ✅ Gemini API key
+            Return matches in JSON format with title, match_score, and location fields."""
         )
-        self.adzuna_app_id = ""  # Fill in your Adzuna app_id
-        self.adzuna_app_key = ""  # Fill in your Adzuna app_key
+        self.adzuna_app_id = ""  # Fill from secrets if needed
+        self.adzuna_app_key = ""
         self.country = "in"
 
     async def run(self, messages: list) -> Dict[str, Any]:
@@ -82,7 +73,7 @@ class MatcherAgent(BaseAgent):
         keywords = [kw for kw in keywords if isinstance(kw, str)]
         print(f"🔍 Search keywords used: {keywords}")
 
-        # Use Gemini to recommend roles (instead of local rule-based mapping)
+        # Use Gemini to recommend roles
         gemini_prompt = f"""
         Based on the following candidate keywords, experience level, and domains, recommend 3-5 ideal job roles.
 
@@ -121,7 +112,6 @@ class MatcherAgent(BaseAgent):
 
         scored_jobs.sort(key=lambda x: int(x["match_score"].rstrip("%")), reverse=True)
 
-        # Fallback jobs if nothing scored
         if not scored_jobs:
             fallback_jobs = self.fetch_jobs_from_adzuna(skills, results_per_page=5)
             for job in fallback_jobs:
@@ -134,7 +124,6 @@ class MatcherAgent(BaseAgent):
                     "url": job.get("redirect_url"),
                 })
 
-        # Role-wise recommendations
         role_job_map = {}
         for role in recommended_roles_list:
             print(f"🔍 Fetching jobs for role: {role}")

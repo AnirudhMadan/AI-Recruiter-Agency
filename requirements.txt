@@ -9,4 +9,6 @@ git+https://github.com/openai/swarm.git
 requests
 datetime
 python-dotenv
+fastapi 
+uvicorn 
 
