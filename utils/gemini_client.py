@@ -1,7 +1,7 @@
 import requests
 
 def query_gemini_proxy(prompt: str, instructions: str = "") -> str:
-    url = "https://proxy-server-m0x4.onrender.com/"  # replace with your deployed URL
+    url = "https://proxy-server-m0x4.onrender.com/gemini"  # ✅ Correct endpoint
     headers = {"Content-Type": "application/json"}
     payload = {
         "prompt": prompt,
