@@ -19,7 +19,7 @@ class BaseAgent:
     def _query_gemini(self, prompt: str) -> str:
         """Query Gemini model with the given prompt"""
         try:
-            url = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent?key={self.api_key}"
+            url = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-pro-latest:generateContent?key={self.api_key}"
 
             payload = {
                 "contents": [
